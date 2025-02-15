@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hacker FB Auto Share</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
+
+        body {
+            background-color: #000;
+            color: #0f0;
+            font-family: 'Share Tech Mono', monospace;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: rgba(0, 0, 0, 0.8);
+            padding: 20px;
+            border: 2px solid #0f0;
+            width: 90%; /* Adjust width for small screens */
+            max-width: 400px; /* Set max width for larger screens */
+            margin: auto;
+            border-radius: 10px;
+            box-shadow: 0px 0px 20px #0f0;
+        }
+
+        input, button {
+            width: 100%;
+            padding: 12px;
+            margin: 6px 0;
+            border: 2px solid #0f0;
+            background: black;
+            color: #0f0;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 14px;
+            border-radius: 5px;
+            box-shadow: 0px 0px 8px #0f0;
+        }
+
+        button {
+            cursor: pointer;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        button:hover {
+            background: #0f0;
+            color: black;
+            box-shadow: 0px 0px 15px #0f0;
+        }
+
+        .result {
+            margin-top: 10px;
+            font-weight: bold;
+        }
+
+        .typewriter {
+            display: inline-block;
+            overflow: hidden;
+            white-space: nowrap;
+            border-right: 3px solid #0f0;
+            animation: typing 2s steps(20, end), blink 0.8s infinite;
+            font-size: 18px;
+        }
+
+        @keyframes typing {
+            from { width: 0 }
+            to { width: 100% }
+        }
+
+        @keyframes blink {
+            50% { border-color: transparent; }
+        }
+    </style>
+</head>
+<body>
+
+    <h1 class="typewriter">FB AUTO SHARE TOOL</h1>
+
+    <div class="container">
+        <p>Enter your details:</p>
+        <input type="text" id="cookies" placeholder="🔑 Enter Cookies">
+        <input type="text" id="token" placeholder="🔓 Enter Access Token">
+        <input type="text" id="postLink" placeholder="🔗 Enter Post Link">
+        <input type="number" id="limit" placeholder="📊 Enter Share Limit">
+        <button onclick="startSharing()">💻 Start Sharing</button>
+
+        <div class="result">
+            <p>✅ Success: <span id="successCount">0</span></p>
+            <p>❌ Failed: <span id="failedCount">0</span></p>
+        </div>
+    </div>
+
+    <script>
+        async function startSharing() {
+            let cookies = document.getElementById("cookies").value.trim();
+            let token = document.getElementById("token").value.trim();
+            let postLink = document.getElementById("postLink").value.trim();
+            let limit = parseInt(document.getElementById("limit").value);
+            let successCount = 0;
+            let failedCount = 0;
+
+            if (!cookies || !token || !postLink || isNaN(limit) || limit <= 0) {
+                alert("⚠️ Enter all details correctly!");
+                return;
+            }
+
+            for (let i = 0; i < limit; i++) {
+                let response = await fetch(`https://graph.facebook.com/v13.0/me/feed?link=${encodeURIComponent(postLink)}&published=0&access_token=${token}`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Cookie": cookies
+                    }
+                });
+
+                let result = await response.json();
+                if (result.id) {
+                    successCount++;
+                } else {
+                    failedCount++;
+                }
+
+                document.getElementById("successCount").innerText = successCount;
+                document.getElementById("failedCount").innerText = failedCount;
+            }
+
+            alert("✅ Sharing completed!");
+        }
+    </script>
+
+</body>
+</html>
